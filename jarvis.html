@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#040913">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jarvis">
+<title>Jarvis</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#040913;color:#67e8f9;font-family:ui-monospace,Menlo,Consolas,monospace;-webkit-text-size-adjust:100%}
+.wrap{max-width:480px;margin:0 auto;padding:14px 14px 28px}
+.bar{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:1.5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px}
+svg{display:block;width:100%;margin-top:4px}
+.wave{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:26px;margin:2px 0 8px}
+.wave i{display:block;width:4px;height:4px;background:#22d3ee;border-radius:2px;opacity:.9}
+.conv{border:1px solid #0e7490;border-radius:10px;padding:8px 10px;font-size:13px;line-height:1.6;min-height:110px;max-height:190px;overflow-y:auto}
+.msg{margin:2px 0}
+.msg.sys{color:#0e7490;font-size:11px}
+.msg.me{color:#fef3c7}
+.msg.ai{color:#67e8f9}
+.msg a{color:#fbbf24}
+.row{display:flex;gap:8px;margin-top:10px}
+input{flex:1;min-width:0;background:#06121f;color:#e0f2fe;border:1px solid #0e7490;border-radius:8px;padding:10px;font:inherit;font-size:16px}
+button{color:#fbbf24;border:1px solid #fbbf24;background:transparent;border-radius:8px;padding:10px 14px;font:inherit;font-size:15px}
+button:active{background:#2a1a05}
+#mic{min-width:52px}
+#mic.on{background:#fbbf24;color:#040913}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.chips button{color:#67e8f9;border-color:#0e7490;font-size:13px;padding:9px 4px}
+.err{display:none;color:#f87171;font-size:13px;margin-top:6px}
+.note{margin-top:12px;font-size:11px;color:#64748b;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <span style="color:#fbbf24">J.A.R.V.I.S</span>
+    <span><span class="dot" id="dot"></span><span id="st">ONLINE</span></span>
+    <span id="clk" style="color:#94a3b8">--:--:--</span>
+  </div>
+
+  <svg viewBox="0 0 380 330" role="img" aria-label="Arc reactor core">
+    <defs>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <g stroke="#164e63" stroke-width="0.6" opacity="0.6">
+      <line x1="0" y1="165" x2="380" y2="165"/><line x1="190" y1="0" x2="190" y2="330"/>
+      <line x1="0" y1="95" x2="380" y2="95" stroke-dasharray="2 6"/><line x1="0" y1="235" x2="380" y2="235" stroke-dasharray="2 6"/>
+    </g>
+    <g transform="translate(190 165)" filter="url(#glow)">
+      <g id="ticks" stroke="#22d3ee" stroke-width="1"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="70s" repeatCount="indefinite"/></g>
+      <circle r="136" fill="none" stroke="#0891b2" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"><animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="45s" repeatCount="indefinite"/></circle>
+      <circle r="122" fill="none" stroke="#fbbf24" stroke-width="5" stroke-dasharray="70 30 140 40 90 80" opacity="0.9"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="22s" repeatCount="indefinite"/></circle>
+      <circle r="106" fill="none" stroke="#155e75" stroke-width="1"/>
+      <circle r="80" fill="none" stroke="#155e75" stroke-width="1"/>
+      <g>
+        <path d="M0 0 L106 0 A106 106 0 0 0 81.2 -68.1 Z" fill="#22d3ee" opacity="0.18"/>
+        <line x1="0" y1="0" x2="106" y2="0" stroke="#a5f3fc" stroke-width="1.5"/>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="5s" repeatCount="indefinite"/>
+      </g>
+      <circle cx="62" cy="-48" r="3" fill="#fbbf24"><animate attributeName="opacity" values="0;1;0" dur="5s" begin="0.6s" repeatCount="indefinite"/></circle>
+      <circle cx="-70" cy="30" r="3" fill="#fbbf24"><animate attributeName="opacity" values="0;1;0" dur="5s" begin="2.9s" repeatCount="indefinite"/></circle>
+      <circle cx="20" cy="88" r="3" fill="#fbbf24"><animate attributeName="opacity" values="0;1;0" dur="5s" begin="4s" repeatCount="indefinite"/></circle>
+      <circle r="62" fill="#05202e" stroke="#22d3ee" stroke-width="2"/>
+      <circle r="50" fill="none" stroke="#67e8f9" stroke-width="9" stroke-dasharray="24 6.16" opacity="0.95"><animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="14s" repeatCount="indefinite"/></circle>
+      <circle r="34" fill="none" stroke="#0e7490" stroke-width="1.5"/>
+      <polygon points="0,-26 22.5,13 -22.5,13" fill="none" stroke="#a5f3fc" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="30s" repeatCount="indefinite"/></polygon>
+    </g>
+    <g transform="translate(190 165)" filter="url(#glow2)">
+      <circle r="13" fill="#e0f2fe"><animate attributeName="r" values="11;15;11" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/></circle>
+    </g>
+    <g stroke="#22d3ee" stroke-width="1.5" fill="none"><path d="M6 24V6H24"/><path d="M374 24V6H356"/><path d="M6 306V324H24"/><path d="M374 306V324H356"/></g>
+    <g font-size="11" fill="#67e8f9" font-family="ui-monospace,Menlo,Consolas,monospace">
+      <text x="12" y="44" fill="#fbbf24">PWR</text><text id="t_pwr" x="12" y="58">98%</text>
+      <text x="368" y="44" text-anchor="end" fill="#fbbf24">CORE</text><text id="t_core" x="368" y="58" text-anchor="end">38 C</text>
+      <text x="12" y="296" fill="#fbbf24">LINK</text><text id="t_link" x="12" y="310">24 ms</text>
+      <text x="368" y="296" text-anchor="end" fill="#fbbf24">SCAN</text><text id="t_scan" x="368" y="310" text-anchor="end">CLEAR</text>
+    </g>
+  </svg>
+
+  <div class="wave" id="wave"></div>
+  <div class="conv" id="conv"></div>
+
+  <div class="row">
+    <input id="q" type="text" placeholder="Jarvis se kuch poocho" autocomplete="off">
+    <button id="mic" aria-label="Bolkar poochho">MIC</button>
+    <button id="go" aria-label="Bhejo">Ask</button>
+  </div>
+  <div class="err" id="err">Pehle kuch likho ya MIC dabao</div>
+
+  <div class="chips">
+    <button data-p="samay kya hua">Samay</button>
+    <button data-p="aaj ki tarikh">Tarikh</button>
+    <button data-p="joke sunao">Joke</button>
+    <button data-p="5 minute ka timer">Timer</button>
+    <button data-p="motivation do">Prerna</button>
+    <button data-p="madad">Madad</button>
+  </div>
+
+  <div class="note">Jarvis abhi chuninda kaam karta hai (samay, tarikh, timer, calculator, joke, search). Awaaz ke liye phone mein Hindi voice chahiye. MIC sirf https wale link par aur internet ke saath chalta hai, likh kar poochna har jagah chalta hai.</div>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a){e.setAttribute(k,a[k]);}if(p){p.appendChild(e);}return e;}
+  var tg=document.getElementById('ticks');
+  for(var i=0;i<72;i++){
+    var a=i*5*Math.PI/180,len=i%6===0?12:5,r1=150,r2=150-len;
+    var l=el('line',{x1:(Math.cos(a)*r1).toFixed(2),y1:(Math.sin(a)*r1).toFixed(2),x2:(Math.cos(a)*r2).toFixed(2),y2:(Math.sin(a)*r2).toFixed(2)},tg);
+    if(i%6===0){l.setAttribute('stroke','#a5f3fc');}
+  }
+
+  var clk=document.getElementById('clk');
+  function tick(){clk.textContent=new Date().toLocaleTimeString('en-GB');}
+  tick();setInterval(tick,1000);
+
+  var tp=document.getElementById('t_pwr'),tc=document.getElementById('t_core'),tl=document.getElementById('t_link'),ts=document.getElementById('t_scan');
+  setInterval(function(){
+    tp.textContent=(95+Math.floor(Math.random()*6))+'%';
+    tc.textContent=(36+Math.floor(Math.random()*7))+' C';
+    tl.textContent=(18+Math.floor(Math.random()*20))+' ms';
+  },1300);
+  var scans=['CLEAR','CLEAR','SCANNING','CLEAR'],si=0;
+  setInterval(function(){si=(si+1)%scans.length;ts.textContent=scans[si];ts.setAttribute('fill',scans[si]==='SCANNING'?'#fbbf24':'#67e8f9');},2200);
+
+  var mode='ONLINE';
+  var st=document.getElementById('st'),dot=document.getElementById('dot');
+  function setState(s){
+    mode=s;st.textContent=s;
+    dot.style.background=s==='LISTENING'?'#fbbf24':(s==='SPEAKING'?'#67e8f9':'#22c55e');
+    document.getElementById('mic').className=s==='LISTENING'?'on':'';
+  }
+  var w=document.getElementById('wave'),bars=[];
+  for(var j=0;j<35;j++){var b=document.createElement('i');w.appendChild(b);bars.push(b);}
+  setInterval(function(){
+    var amp=mode==='ONLINE'?3:(mode==='LISTENING'?10:16);
+    var gain=mode==='ONLINE'?0.15:0.9;
+    bars.forEach(function(bb,k){var mid=17-Math.abs(17-k);bb.style.height=Math.round(3+Math.random()*(amp+mid*gain))+'px';});
+  },110);
+
+  var conv=document.getElementById('conv');
+  function add(who,text,link){
+    var d=document.createElement('div');
+    d.className='msg '+who;
+    d.textContent=(who==='me'?'> ':(who==='ai'?'JARVIS: ':''))+text;
+    if(link){
+      d.appendChild(document.createElement('br'));
+      var an=document.createElement('a');
+      an.href=link.href;an.target='_blank';an.rel='noopener';an.textContent=link.text;
+      d.appendChild(an);
+    }
+    conv.appendChild(d);
+    while(conv.children.length>10){conv.removeChild(conv.firstChild);}
+    conv.scrollTop=conv.scrollHeight;
+  }
+
+  var voices=[];
+  function loadVoices(){if('speechSynthesis' in window){voices=speechSynthesis.getVoices();}}
+  loadVoices();
+  if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=loadVoices;}
+  function speak(t){
+    if(!('speechSynthesis' in window)){return;}
+    try{
+      speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(t);
+      u.lang='hi-IN';
+      var v=null;
+      for(var i=0;i<voices.length;i++){
+        var lg=(voices[i].lang||'').toLowerCase().replace('_','-');
+        if(lg.indexOf('hi')===0){v=voices[i];break;}
+      }
+      if(v){u.voice=v;}
+      u.rate=0.95;u.pitch=0.85;
+      u.onstart=function(){setState('SPEAKING');};
+      u.onend=function(){setState('ONLINE');};
+      u.onerror=function(){setState('ONLINE');};
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function reply(text,link){add('ai',text,link);speak(text);}
+
+  var days=['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+  var months=['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्तूबर','नवंबर','दिसंबर'];
+  var jokes=[
+    'टीचर ने पूछा, पानी कब बर्फ़ बनता है? छात्र बोला, जब उसे ठंड लग जाए सर।',
+    'बेटे ने पूछा, पापा मैं बड़ा होकर क्या बनूँगा? पापा बोले, पहले अपना कमरा साफ़ कर ले, फिर सोचेंगे।',
+    'मरीज़ बोला, डॉक्टर साहब मुझे भूलने की बीमारी है। डॉक्टर ने कहा, कब से? मरीज़ बोला, किससे?',
+    'पत्नी ने कहा, आप मेरी बात कभी नहीं सुनते। पति बोला, क्या कहा तुमने?'
+  ];
+  var quotes=[
+    'छोटे कदम रोज़ चलो, मंज़िल अपने आप पास आती है।',
+    'आज का काम आज करो, कल का तुम्हारा शुक्रिया कहेगा।',
+    'गिरना बुरा नहीं है, गिरकर वहीं बैठ जाना बुरा है।',
+    'सपने देखना आसान है, उन पर रोज़ काम करना असली ताक़त है।'
+  ];
+  var jk=0,qk=0;
+  function has(t,list){for(var i=0;i<list.length;i++){if(t.indexOf(list[i])!==-1){return true;}}return false;}
+
+  function answer(raw){
+    var t=raw.toLowerCase().trim();
+    var d=new Date();
+
+    if(has(t,['help','madad','मदद','kya kar','क्या कर','what can'])){
+      reply('मैं ये कर सकता हूँ: समय और तारीख बताना, टाइमर लगाना, हिसाब करना जैसे 12 + 5, चुटकुला, प्रेरणा की बात, बैटरी बताना, यूट्यूब खोलना, और गूगल सर्च।');return;
+    }
+    var tm=t.match(/(\d+)\s*(minute|min|मिनट|second|sec|सेकंड|सेकण्ड)/);
+    if(tm&&has(t,['timer','टाइमर'])){
+      var n=parseInt(tm[1],10);
+      var isSec=/^(second|sec|सेकंड|सेकण्ड)/.test(tm[2]);
+      var ms=n*(isSec?1000:60000);
+      if(ms>0&&ms<=6*3600000){
+        setTimeout(function(){var m='टाइमर पूरा हुआ सर।';add('ai',m);speak(m);},ms);
+        reply('ठीक है, '+n+(isSec?' सेकंड':' मिनट')+' का टाइमर शुरू। पेज खुला रखिए।');return;
+      }
+    }
+    var cm=t.match(/(\d+(?:\.\d+)?(?:\s*[\+\-\*\/×÷x]\s*\d+(?:\.\d+)?)+)/i);
+    if(cm){
+      var ex=cm[1].replace(/[×x]/gi,'*').replace(/÷/g,'/');
+      if(/^[\d\.\s\+\-\*\/]+$/.test(ex)){
+        try{
+          var val=Function('return ('+ex+')')();
+          if(isFinite(val)){reply('जवाब है '+(Math.round(val*1000000)/1000000)+'।');return;}
+        }catch(e){}
+      }
+    }
+    if(has(t,['battery','बैटरी'])){
+      if(navigator.getBattery){
+        navigator.getBattery().then(function(bt){
+          reply('बैटरी '+Math.round(bt.level*100)+' प्रतिशत है'+(bt.charging?', और चार्ज हो रही है।':'।'));
+        },function(){reply('बैटरी की जानकारी नहीं मिल पाई।');});
+      }else{reply('इस ब्राउज़र में बैटरी की जानकारी नहीं मिलती।');}
+      return;
+    }
+    if(has(t,['time','samay','baje','समय','बजे','टाइम'])){
+      var h=d.getHours(),mi=d.getMinutes(),h12=h%12||12;
+      var part=h<5?'रात':(h<12?'सुबह':(h<17?'दोपहर':(h<20?'शाम':'रात')));
+      reply('अभी '+part+' के '+h12+' बजकर '+mi+' मिनट हुए हैं।');return;
+    }
+    if(has(t,['date','tarikh','tareekh','तारीख','तिथि','kaun sa din','कौन सा दिन','which day'])){
+      reply('आज '+days[d.getDay()]+' है, '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear()+'।');return;
+    }
+    if(has(t,['joke','chutkula','जोक','चुटकुला','hasao','हंसाओ','हँसाओ'])){
+      reply(jokes[jk%jokes.length]);jk++;return;
+    }
+    if(has(t,['motivat','prerna','प्रेरणा','मोटिवेट','himmat','हिम्मत'])){
+      reply(quotes[qk%quotes.length]);qk++;return;
+    }
+    if(has(t,['youtube','यूट्यूब'])){
+      reply('यह लीजिए यूट्यूब।',{text:'YouTube kholo',href:'https://www.youtube.com'});return;
+    }
+    var sm=raw.match(/(?:search|google|खोजो|सर्च)\s+(.+)/i);
+    if(sm){
+      reply('यह लीजिए, गूगल पर '+sm[1]+' का रिज़ल्ट।',{text:'Google par dekho',href:'https://www.google.com/search?q='+encodeURIComponent(sm[1])});return;
+    }
+    if(has(t,['naam','नाम','kaun ho','कौन हो','who are you'])){
+      reply('मैं जार्विस हूँ, आपका वर्चुअल असिस्टेंट। मैं इस पेज के अंदर कुछ चुनिंदा काम कर सकता हूँ।');return;
+    }
+    if(has(t,['hello','namaste','नमस्ते','हेलो','hi','jarvis','जार्विस','जारविस'])){
+      var g=d.getHours()<12?'सुप्रभात':(d.getHours()<17?'नमस्ते':'शुभ संध्या');
+      reply(g+' सर, मैं जार्विस हूँ। बताइए, क्या करूँ?');return;
+    }
+    reply('माफ़ कीजिए, यह मुझे अभी समझ नहीं आया। मदद बोलकर देखिए कि मैं क्या कर सकता हूँ।');
+  }
+
+  function handle(text){
+    var t=text.trim();
+    if(!t){return false;}
+    add('me',t);
+    answer(t);
+    return true;
+  }
+
+  var q=document.getElementById('q'),err=document.getElementById('err');
+  q.addEventListener('input',function(){err.style.display='none';});
+  function send(){
+    if(!handle(q.value)){err.style.display='block';return;}
+    q.value='';
+  }
+  document.getElementById('go').addEventListener('click',send);
+  q.addEventListener('keydown',function(e){if(e.key==='Enter'){send();}});
+  var chips=document.querySelectorAll('.chips button');
+  for(var c=0;c<chips.length;c++){
+    chips[c].addEventListener('click',function(){handle(this.getAttribute('data-p'));});
+  }
+
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var rec=null,listening=false;
+  document.getElementById('mic').addEventListener('click',function(){
+    if(!SR){add('ai','इस ब्राउज़र में माइक नहीं चलता, लिखकर पूछिए।');return;}
+    if(listening&&rec){rec.stop();return;}
+    try{
+      if('speechSynthesis' in window){speechSynthesis.cancel();}
+      rec=new SR();
+      rec.lang='hi-IN';rec.interimResults=false;rec.maxAlternatives=1;
+      rec.onstart=function(){listening=true;setState('LISTENING');};
+      rec.onerror=function(e){
+        add('ai',e.error==='not-allowed'?'माइक की अनुमति नहीं मिली। लिखकर पूछिए, या पेज को https लिंक से खोलिए।':'आवाज़ सुनने में दिक्कत हुई, फिर कोशिश कीजिए।');
+      };
+      rec.onend=function(){listening=false;if(mode==='LISTENING'){setState('ONLINE');}};
+      rec.onresult=function(ev){handle(ev.results[0][0].transcript);};
+      rec.start();
+    }catch(e){add('ai','माइक शुरू नहीं हो पाया, लिखकर पूछिए।');}
+  });
+
+  var h0=new Date().getHours();
+  var greet=h0<12?'Shubh prabhat':(h0<17?'Namaste':'Shubh sandhya');
+  var boot=['> initializing core systems...','> neural link ........ OK','> arc reactor ........ STABLE','> voice module ....... READY','> '+greet+', sir. All systems online.'];
+  var bi=0;
+  var bt=setInterval(function(){
+    add('sys',boot[bi]);
+    bi++;
+    if(bi>=boot.length){clearInterval(bt);}
+  },600);
+})();
+</script>
+</body>
+</html>
